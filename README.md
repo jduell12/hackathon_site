@@ -1,16 +1,27 @@
-# hackathon-site
+# Pendo Test Site
 
-This template should help get you started developing with Vue 3 in Vite.
+## Used for integration testing in all environments.
 
-## Recommended IDE Setup
+This is a test site similar to our [Pendo QE site](https://pendo-io.github.io/setup.html) but allows a user to be able to inject a native integration into the test site.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+This helps to allow more than just members of Tapioca to triage integration bugs that come in faster without the need to reach out to Team Tapioca regarding how to test an integration for a customer.
 
-## Customize configuration
+To use the site successfully you'll need to fill out the form with appropiate information:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+1. GCS Bucket (hint: cdn.pendo.io): This is where you enter the GCS bucket for your server. This is found in the install snippet in the subscription. Examples:
 
-## Project Setup
+- Pendo-Dev: pendo-dev-static.storage.googleapis.com
+- Pendo-Widlings: pendo-wildlings-static.storage.googleapis.com
+- Pendo-Test: pendo-test-static.storage.googleapis.com
+- Production: cdn.pendo.io
+
+2. apiKey: This is the apiKey for your subscription. Also found in the Pendo snippet on your subscription.
+3. Visitor Id: Some visitor id. It just needs a value so it can tie events to a visitor.
+4. Role (Optional): Drown down with possible roles to choose for the visitor.
+5. Account ID (optional): Additional metadata. Not required.
+6. Account Name (optional): An account name. If the sub has parent accounts, it needs to be in the `parent::account` format.
+
+### Project Setup
 
 ```sh
 npm install
@@ -28,14 +39,12 @@ npm run dev
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
+
+## Deploy
+
+https://learnvue.co/articles/deploy-vue-to-github-pages

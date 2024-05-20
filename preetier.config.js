@@ -1,0 +1,1 @@
+module.exports = require('@pendo/eslint-config/prettier.config.js');
