@@ -53,6 +53,17 @@
             }
           }
         })();
+        this.initializeIntercom();
+      },
+      async initializeIntercom() {
+        console.log("here");
+        window.Intercom("boot", {
+          api_base: "https://api-iam.intercom.io",
+          app_id: import.meta.env.VITE_INTERCOM_KEY,
+          user_id: this.visitor_id,
+          email: this.email,
+          created_at: new Date(),
+        });
       },
       removeIntercom() {
         const scripts = document.querySelectorAll("script");
