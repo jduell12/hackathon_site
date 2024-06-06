@@ -155,6 +155,7 @@
         this.pendoScriptLoaded = true;
       },
       removePendo() {
+        window.pendo.clearSession();
         const scripts = document.querySelectorAll("script");
         for (const script of scripts) {
           if (script.getAttribute("src").split("/").includes("agent")) {
