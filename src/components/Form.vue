@@ -5,65 +5,76 @@
     <p :v-if="envErrMsg">{{ envErrMsg }}</p>
     <span class="form_span">
       <form>
-        <FloatLabel>
-          <Dropdown
-            placeholder="Select an envrionment"
-            v-model="form.env"
-            input-id="env"
-            :options="environments"
-          />
-          <label for="env"> Pendo Environment </label>
-        </FloatLabel>
-        <FloatLabel>
-          <label for="apiKey"> Subscription apiKey </label>
-          <InputText id="apiKey" v-model="form.apiKey" />
-        </FloatLabel>
-        <FloatLabel>
-          <label for="visitor"> Visitor ID </label>
-          <InputText id="visitor" v-model="form.visitor_id" />
-        </FloatLabel>
-        <FloatLabel>
-          <Dropdown
-            placeholder="Select a role for the visitor:"
-            v-model="form.role"
-            input-id="role"
-            :options="roles"
-          />
-          <label for="role"> Role (Optional) </label>
-        </FloatLabel>
-        <FloatLabel>
-          <label for="account_name"> Account Name (Optional) </label>
-          <InputText id="account_name" v-model="form.account_name" />
-        </FloatLabel>
-        <FloatLabel>
-          <label for="account_id"> Account ID (Optional) </label>
-          <InputText id="account_id" v-model="form.account_id" />
-        </FloatLabel>
-        <label class="radio_label"
-          >Native Integration (Optional)
-          <div
-            v-for="integration in integrations"
-            :key="integration.key"
-            class="radio_btns"
-          >
-            <RadioButton
-              v-model="form.integration"
-              :inputId="integration.key"
-              name="dynamic"
-              :value="integration.name"
-            />
-            <label :for="integration.key" class="ml-2">{{
-              integration.label
-            }}</label>
-          </div>
-        </label>
-        <div class="segment_div">
-          <label for="segment"> Enable Segment (Optional): </label>
-          <Checkbox
-            id="account_name"
-            :binary="true"
-            v-model="form.enableSegment"
-          />
+        <Splitter>
+          <SplitterPanel>
+            <FloatLabel>
+              <Dropdown
+                placeholder="Select an envrionment"
+                v-model="form.env"
+                input-id="env"
+                :options="environments"
+              />
+              <label for="env"> Pendo Environment </label>
+            </FloatLabel>
+            <FloatLabel>
+              <label for="apiKey"> Subscription apiKey </label>
+              <InputText id="apiKey" v-model="form.apiKey" />
+            </FloatLabel>
+            <FloatLabel>
+              <label for="visitor"> Visitor ID </label>
+              <InputText id="visitor" v-model="form.visitor_id" />
+            </FloatLabel>
+            <FloatLabel>
+              <Dropdown
+                placeholder="Select a role for the visitor:"
+                v-model="form.role"
+                input-id="role"
+                :options="roles"
+              />
+              <label for="role"> Role (Optional) </label>
+            </FloatLabel>
+            <FloatLabel>
+              <label for="account_name"> Account Name (Optional) </label>
+              <InputText id="account_name" v-model="form.account_name" />
+            </FloatLabel>
+            <FloatLabel>
+              <label for="account_id"> Account ID (Optional) </label>
+              <InputText id="account_id" v-model="form.account_id" />
+            </FloatLabel>
+          </SplitterPanel>
+          <SplitterPanel>
+            <label class="radio_label"
+              >Native Integration (Optional)
+              <div
+                v-for="integration in integrations"
+                :key="integration.key"
+                class="radio_btns"
+              >
+                <RadioButton
+                  v-model="form.integration"
+                  :inputId="integration.key"
+                  name="dynamic"
+                  :value="integration.name"
+                />
+                <label :for="integration.key" class="ml-2">{{
+                  integration.label
+                }}</label>
+              </div>
+              <Button @click="clear_integration">Clear</Button>
+            </label>
+            <div class="segment_div">
+              <label for="segment"> Enable Segment (Optional): </label>
+              <Checkbox
+                id="account_name"
+                :binary="true"
+                v-model="form.enableSegment"
+              />
+            </div>
+          </SplitterPanel>
+        </Splitter>
+        <div class="save_div">
+          <label for="save"> Remember Selection: </label>
+          <Checkbox id="save" :binary="true" v-model="form.save_options" />
         </div>
         <Button @click="submit">Submit</Button>
       </form>
@@ -80,6 +91,8 @@
   import FloatLabel from "primevue/floatlabel";
   import InputText from "primevue/inputtext";
   import RadioButton from "primevue/radiobutton";
+  import Splitter from "primevue/splitter";
+  import SplitterPanel from "primevue/splitterpanel";
 
   export default {
     name: "IntroForm",
@@ -98,6 +111,8 @@
       FloatLabel,
       InputText,
       RadioButton,
+      Splitter,
+      SplitterPanel,
     },
     data() {
       return {
@@ -137,6 +152,7 @@
           integration: "",
           role: "",
           enableSegment: false,
+          save_options: false,
         },
         integrations: [
           { key: "drift", name: "drift", label: "Drift" },
@@ -145,6 +161,14 @@
         ],
         roles: ["Engineering", "Sales", "Product Manager", "Quality Engineer"],
       };
+    },
+    created() {
+      const form = JSON.parse(localStorage.getItem("form"));
+
+      //checks form for non-empty strings and clicked check-boxes
+      if (Object.values(form).some((str) => str != "" || str === true)) {
+        this.form = form;
+      }
     },
     watch: {
       form: {
@@ -158,6 +182,18 @@
       },
     },
     methods: {
+      clear_integration() {
+        this.form.integration = "";
+      },
+      formatForm() {
+        this.form.env = this.form.env.trim();
+        this.form.apiKey = this.form.apiKey.trim();
+        this.form.visitor_id = this.form.visitor_id.trim();
+        this.form.email = this.form.email.trim();
+        this.form.account_name = this.form.account_name.trim();
+        this.form.account_id = this.form.account_id.trim();
+        this.form.role = this.form.role.trim();
+      },
       submit(e) {
         e.preventDefault();
         this.formatForm();
@@ -172,20 +208,17 @@
           return;
         }
 
+        if (this.form.save_options) {
+          localStorage.setItem("form", JSON.stringify({ ...this.form }));
+        } else {
+          localStorage.removeItem("form");
+        }
+
         this.form.env = `pendo-${this.form.env}`;
 
         this.store.updateEnv(this.form);
 
         this.$router.push("/dashboard");
-      },
-      formatForm() {
-        this.form.env = this.form.env.trim();
-        this.form.apiKey = this.form.apiKey.trim();
-        this.form.visitor_id = this.form.visitor_id.trim();
-        this.form.email = this.form.email.trim();
-        this.form.account_name = this.form.account_name.trim();
-        this.form.account_id = this.form.account_id.trim();
-        this.form.role = this.form.role.trim();
       },
     },
   };
@@ -206,34 +239,43 @@
       form {
         display: flex;
         flex-direction: column;
-        width: 300px;
 
-        .p-float-label {
-          margin: 16px 0;
+        .p-splitter {
+          height: 65vh;
+          width: 90vw;
         }
 
-        .p-inputtext,
-        .p-dropdown {
-          width: 325px;
-          font-size: 14px;
+        .p-splitter-panel {
+          padding: 12px;
+
+          .p-float-label {
+            margin: 36px 0;
+          }
+
+          .p-inputtext,
+          .p-dropdown {
+            width: 325px;
+            font-size: 14px;
+          }
+
+          .radio_label {
+            text-align: justify;
+          }
+
+          .radio_btns {
+            display: flex;
+            align-items: flex-end;
+            padding-left: 12px;
+            margin: 12px 0;
+          }
+
+          .p-radiobutton {
+            margin-right: 12px;
+          }
         }
 
-        .radio_label {
-          text-align: justify;
-        }
-
-        .radio_btns {
-          display: flex;
-          align-items: flex-end;
-          padding-left: 12px;
-          margin: 12px 0;
-        }
-
-        .p-radiobutton {
-          margin-right: 12px;
-        }
-
-        .segment_div {
+        .segment_div,
+        .save_div {
           display: flex;
           margin: 12px 0;
           label {
