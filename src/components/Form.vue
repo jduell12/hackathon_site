@@ -85,7 +85,7 @@
           <label for="save"> Remember Selection: </label>
           <Checkbox id="save" :binary="true" v-model="form.save_options" />
         </div>
-        <Button @click="submit">Submit</Button>
+        <Button class="submit_btn" @click="submit">Submit</Button>
       </form>
     </span>
   </div>
@@ -256,14 +256,21 @@
       form {
         display: flex;
         flex-direction: column;
+        max-width: 1275px;
 
         .p-splitter {
           height: 65vh;
           width: 90vw;
+          max-width: 1275px;
         }
 
         .p-splitter-panel {
           padding: 12px;
+          margin-left: 120px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: space-between;
 
           .p-float-label {
             margin: 36px 0;
@@ -308,7 +315,28 @@
           display: flex;
           justify-content: center;
         }
+
+        .save_div {
+          margin: 12px auto;
+        }
+
+        .submit_btn {
+          margin: auto;
+          width: 200px;
+        }
       }
+    }
+  }
+
+  @media (max-width: 1070px) {
+    .p-splitter-panel {
+      margin-left: 48px !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .p-splitter-panel {
+      margin-left: 5% !important;
     }
   }
 </style>
