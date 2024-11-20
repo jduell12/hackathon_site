@@ -23,6 +23,11 @@
             <FloatLabel>
               <label for="visitor"> Visitor ID </label>
               <InputText id="visitor" v-model="form.visitor_id" />
+              <Button
+                @click="() => generateRandomID('visitor')"
+                class="random_id_btn"
+                >Generate Random Visitor ID</Button
+              >
             </FloatLabel>
             <FloatLabel>
               <Dropdown
@@ -33,6 +38,8 @@
               />
               <label for="role"> Role (Optional) </label>
             </FloatLabel>
+          </SplitterPanel>
+          <SplitterPanel>
             <FloatLabel>
               <label for="account_name"> Account Name (Optional) </label>
               <InputText id="account_name" v-model="form.account_name" />
@@ -40,9 +47,12 @@
             <FloatLabel>
               <label for="account_id"> Account ID (Optional) </label>
               <InputText id="account_id" v-model="form.account_id" />
+              <Button
+                @click="() => generateRandomID('account')"
+                class="random_id_btn"
+                >Generate Random Account ID</Button
+              >
             </FloatLabel>
-          </SplitterPanel>
-          <SplitterPanel>
             <label class="radio_label"
               >Native Integration (Optional)
               <div
@@ -60,7 +70,6 @@
                   integration.label
                 }}</label>
               </div>
-              <Button @click="clear_integration">Clear</Button>
             </label>
             <div class="segment_div">
               <label for="segment"> Enable Segment (Optional): </label>
@@ -158,6 +167,7 @@
           { key: "drift", name: "drift", label: "Drift" },
           { key: "intercom", name: "intercom", label: "Intercom" },
           { key: "zendesk", name: "zendesk", label: "Zendesk" },
+          { key: "none", name: "", label: "None" },
         ],
         roles: ["Engineering", "Sales", "Product Manager", "Quality Engineer"],
       };
@@ -193,6 +203,13 @@
         this.form.account_name = this.form.account_name.trim();
         this.form.account_id = this.form.account_id.trim();
         this.form.role = this.form.role.trim();
+      },
+      generateRandomID(type) {
+        if (type === "visitor") {
+          this.form.visitor_id = window.crypto.randomUUID();
+        } else {
+          this.form.account_id = window.crypto.randomUUID();
+        }
       },
       submit(e) {
         e.preventDefault();
@@ -250,6 +267,10 @@
 
           .p-float-label {
             margin: 36px 0;
+          }
+
+          .random_id_btn {
+            margin: 12px auto;
           }
 
           .p-inputtext,
