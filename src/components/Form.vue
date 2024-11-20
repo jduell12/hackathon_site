@@ -16,6 +16,10 @@
               />
               <label for="env"> Pendo Environment </label>
             </FloatLabel>
+            <i
+              v-tooltip.top="'pendo-internal can not be used at this time'"
+              class="tooltip pi pi-info-circle"
+            ></i>
             <FloatLabel>
               <label for="apiKey"> Subscription apiKey </label>
               <InputText id="apiKey" v-model="form.apiKey" />
@@ -25,8 +29,23 @@
               <InputText id="visitor" v-model="form.visitor_id" />
               <Button
                 @click="() => generateRandomID('visitor')"
-                class="random_id_btn"
+                :class="[
+                  form.visitor_id === '' ? 'label__btn' : '',
+                  'random_id_btn',
+                ]"
                 >Generate Random Visitor ID</Button
+              >
+            </FloatLabel>
+            <FloatLabel>
+              <label for="visitor_email"> Visitor Email </label>
+              <InputText id="visitor_email" v-model="form.email" />
+              <Button
+                @click="() => generateRandomID('email')"
+                :class="[
+                  form.email === '' ? 'label__btn' : '',
+                  'random_id_btn',
+                ]"
+                >Generate Random Visitor Email</Button
               >
             </FloatLabel>
             <FloatLabel>
@@ -49,7 +68,10 @@
               <InputText id="account_id" v-model="form.account_id" />
               <Button
                 @click="() => generateRandomID('account')"
-                class="random_id_btn"
+                :class="[
+                  form.account_id === '' ? 'label__btn' : '',
+                  'random_id_btn',
+                ]"
                 >Generate Random Account ID</Button
               >
             </FloatLabel>
@@ -85,7 +107,12 @@
           <label for="save"> Remember Selection: </label>
           <Checkbox id="save" :binary="true" v-model="form.save_options" />
         </div>
-        <Button class="submit_btn" @click="submit">Submit</Button>
+        <div class="form_footer">
+          <Button class="submit_btn" @click="submit">Submit</Button>
+          <Button class="clear_btn" severity="warn" @click="clearForm"
+            >Clear Form</Button
+          >
+        </div>
       </form>
     </span>
   </div>
@@ -133,6 +160,7 @@
           "batman",
           "calypso",
           "dap",
+          "dev",
           "freeze",
           "helix",
           "ionchef",
@@ -147,6 +175,7 @@
           "perfserf",
           "scrum-ops",
           "security",
+          "test",
           "voc",
           "wildlings",
         ],
@@ -192,8 +221,19 @@
       },
     },
     methods: {
-      clear_integration() {
-        this.form.integration = "";
+      clearForm() {
+        this.form = {
+          env: "",
+          apiKey: "",
+          visitor_id: "",
+          email: "",
+          account_name: "",
+          account_id: "",
+          integration: "",
+          role: "",
+          enableSegment: false,
+          save_options: false,
+        };
       },
       formatForm() {
         this.form.env = this.form.env.trim();
@@ -207,8 +247,10 @@
       generateRandomID(type) {
         if (type === "visitor") {
           this.form.visitor_id = window.crypto.randomUUID();
-        } else {
+        } else if (type === "account") {
           this.form.account_id = window.crypto.randomUUID();
+        } else {
+          this.form.email = "something@gmail.com";
         }
       },
       submit(e) {
@@ -259,7 +301,6 @@
         max-width: 1275px;
 
         .p-splitter {
-          height: 65vh;
           width: 90vw;
           max-width: 1275px;
         }
@@ -267,10 +308,12 @@
         .p-splitter-panel {
           padding: 12px;
           margin-left: 120px;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          justify-content: space-between;
+
+          .tooltip {
+            position: absolute;
+            top: 210px;
+            left: 240px;
+          }
 
           .p-float-label {
             margin: 36px 0;
@@ -278,6 +321,10 @@
 
           .random_id_btn {
             margin: 12px auto;
+          }
+
+          .label__btn {
+            margin-top: 36px;
           }
 
           .p-inputtext,
@@ -320,9 +367,20 @@
           margin: 12px auto;
         }
 
-        .submit_btn {
-          margin: auto;
-          width: 200px;
+        .form_footer {
+          display: flex;
+          flex-direction: row;
+
+          .submit_btn,
+          .clear_btn {
+            margin: auto;
+            width: 200px;
+          }
+
+          .clear_btn {
+            background: #f8818c;
+            border: 1px solid #f8818c;
+          }
         }
       }
     }

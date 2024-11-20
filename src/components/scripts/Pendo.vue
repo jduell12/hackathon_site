@@ -24,7 +24,14 @@
 
       const checkInterval = setInterval(function () {
         if (apiKey && env) {
-          callPendo(apiKey, env);
+          const src =
+            (env === "pendo-test"
+              ? "https://staging-cdn.pendo-dev.com/agent/static/"
+              : `https://cdn.${env}.pendo-dev.com/agent/static/`) +
+            apiKey +
+            "/pendo.js";
+
+          callPendo(src);
           initializePendo();
           clearInterval(checkInterval);
         }
@@ -74,7 +81,7 @@
       this.removePendo();
     },
     methods: {
-      callPendo(apiKey, env) {
+      callPendo(src) {
         (function (p, e, n, d, o) {
           var v, w, x, y, z;
           o = p[d] = p[d] || {};
@@ -92,10 +99,7 @@
             })(v[w]);
           y = e.createElement(n);
           y.async = !0;
-          y.src =
-            `https://cdn.${env}.pendo-dev.com/agent/static/` +
-            apiKey +
-            "/pendo.js";
+          y.src = src;
           z = e.getElementsByTagName(n)[0];
           z.parentNode.insertBefore(y, z);
         })(window, document, "script", "pendo");
